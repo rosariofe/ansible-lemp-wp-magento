@@ -1,0 +1,14 @@
+---
+  - hosts: DesafioDevOps
+    remote_user: vagrant
+    become: yes
+    become_method: sudo
+
+    roles:
+      - nginx
+      - php
+      - mariadb
+      - wordpress
+      
+
+     

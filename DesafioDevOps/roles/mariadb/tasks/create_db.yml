@@ -1,0 +1,28 @@
+---
+
+- name: Create a new databases
+  mysql_db:
+    name:
+      - "{{ wordpress_database }}"
+      - "{{ magento_database }}"
+    state: present
+  tags:
+    - Database Role
+
+- name: Create user with password, {{ wordpress_database }} database privileges
+  mysql_user:
+    state: present
+    name: '{{ wordpress_user }}'
+    password: '{{ wordpress_password }}'
+    priv: '{{ wordpress_database }}.*:ALL,GRANT'
+  tags:
+    - Database Role 
+
+- name: Create user with password, {{ magento_database }} database privileges
+  mysql_user:
+    state: present
+    name: '{{ magento_user }}'
+    password: '{{ magento_password }}'
+    priv: '{{ magento_database }}.*:ALL,GRANT'
+  tags:
+    - Database Role

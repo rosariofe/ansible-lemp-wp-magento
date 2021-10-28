@@ -1,0 +1,13 @@
+---
+
+- name: install the latest version of php_dependencies
+  dnf:
+    name: '{{ php_dependencies }}'
+    state: latest
+
+- name: copy file php.ini 
+  ansible.builtin.copy:
+    src: php.ini
+    dest: /etc/php.ini
+  tags:
+    - Copy php.ini

@@ -1,0 +1,51 @@
+---
+- name: Create some directory if not exist
+  file:
+    path: /var/www/html/
+    state: directory
+  tags: 
+    - wordpress
+
+- name: Download Wordpress
+  get_url:
+    url: http://wordpress.org/latest.tar.gz
+    dest: /var/www/html/
+
+- name: Descompactar wordpress
+  unarchive:
+    src: /var/www/html/wordpress-5.8.1.tar.gz
+    dest: /var/www/html/
+    remote_src: yes
+
+- name: Adicionando arquivo .conf do blog
+  template:
+    src: wpconfig.conf.j2
+    dest: "/etc/nginx/conf.d/blog.conf"
+
+- name: Adicionando wp-config
+  template:
+    src: wp-config.j2
+    dest: /var/www/html/wordpress/wp-config.php
+
+- name: Setando permissão
+  file:
+    path: "/var/www/html/wordpress"
+    owner: nginx
+    group: nginx
+    recurse: yes
+  tags: 
+    - wordpress
+    
+- name: restart php-fpm
+  service:
+    name: php-fpm
+    state: restarted  
+  tags: 
+    - wordpress
+    
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted 
+  tags: 
+    - wordpress

@@ -1,0 +1,16 @@
+---
+
+- name: Instalando o Maria DB 
+  yum: 
+      name:
+       - mariadb-server
+       - python3-PyMySQL
+      state: latest
+
+- name: Habilitando a inicialização Maria DB 
+  service: 
+    name: mariadb
+    enabled: true
+    state: started
+
+    

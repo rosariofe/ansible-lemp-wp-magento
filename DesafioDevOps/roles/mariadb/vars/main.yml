@@ -1,0 +1,8 @@
+---
+passwd_db: shadow
+wordpress_database: wordpressdb
+wordpress_user: wordpress
+wordpress_password: elfos123
+magento_database: magentodb
+magento_user: magento
+magento_password: elfos123

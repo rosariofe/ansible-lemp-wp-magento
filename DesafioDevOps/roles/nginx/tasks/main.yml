@@ -1,0 +1,4 @@
+---
+
+- include: packages_nginx.yml
+- include: install_nginx.yml

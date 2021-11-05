@@ -1,0 +1,95 @@
+---
+- name: Adicionando arquivo de conf para o magento
+  template:
+    src: magento.conf
+    dest: "/etc/php.fpm.d/"
+
+- name: Restart php-fpm
+  service:
+    name: php-fpm
+    state: restarted
+  tags:
+    - magento
+
+- name: Instalando Unzip
+  dnf:
+    name: unzip
+
+- name: Download do Magento
+  get_url:
+    url: https://github.com/magento/magento2/archive/2.3.zip
+    dest: /var/www/html/
+    
+- name: Create some directory if not exist
+  file:
+    path: /var/www/html/magento2
+    state: directory
+  tags: 
+    - magento
+
+- name: Descompactar magento
+  unarchive:
+    src: /var/www/html/magento2-2.3.zip
+    dest: /var/www/html/magento2
+    remote_src: yes
+
+- name: Instalando o composer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/installer
+  tags: composer
+
+- name: Instalando o composer pt2
+  shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
+  args:
+    creates: /usr/loca/bin/composer
+  tags: composer
+
+- name: rename composer.phar to composer
+  shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
+  args:
+    creates: /usr/local/bin/composer
+  tags: composer
+
+- name: make composer executable
+  file: 
+    path: /usr/local/bin/composer
+    mode: a+x
+    state: file
+  tags: composer
+
+- name: Setando as permissões 
+  file:
+    path: "/var/www/html/magento"
+    owner: nginx
+    group: nginx
+    recurse: yes
+  tags: magento
+
+- name: Setando as permissões pt02
+  file:
+    path: "/var/www/html/magento"
+    mode: a+x
+
+- name: Criando virtual host para o magento
+  template:
+    src: magentovhost.conf
+    dest: /etc/nginx/conf.d/
+
+- name: restart php-fpm
+  service:
+    name: php-fpm
+    state: restarted  
+  tags: 
+    - magento
+    
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted 
+  tags: 
+    - magento
+
+- name: desabilita selinux
+  selinux:
+    state: disabled

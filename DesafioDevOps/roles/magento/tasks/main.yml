@@ -1,0 +1,4 @@
+---
+# tasks file for magento
+
+- include: install_magento.yml
